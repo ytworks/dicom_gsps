@@ -28,10 +28,12 @@ def set_gsps_general_study_info(dataset, file_meta, series_instance_uid):
     dataset.PresentationCreationTime = datetime.now().time().strftime("%H%M%S")
     dataset.ContentCreatorName = "GSPS^demo"
     dataset.PresentationLUTShape = "IDENTITY"
+    return dataset
 
 
 def set_content_desription(dataset, description):
     dataset.ContentDescription = description
+    return dataset
 
 
 def set_referenced_image_info(dataset, series_instance_uid, sop_class_uid, sop_instance_uid):
@@ -42,6 +44,7 @@ def set_referenced_image_info(dataset, series_instance_uid, sop_class_uid, sop_i
     referenced_image_dataset.ReferencedSOPInstanceUID = sop_instance_uid
     referenced_series_dataset.ReferencedImages = Sequence([referenced_image_dataset])
     dataset.ReferencedSeries = Sequence([referenced_series_dataset])
+    return dataset
 
 
 def copy_details_from_input_dicom(dicom, input_dicom):
@@ -56,11 +59,11 @@ def copy_details_from_input_dicom(dicom, input_dicom):
                      'StudyTime',
                      'ReferringPhysicianName',
                      'AccessionNumber']
-    print(data_elements)
-    for de in data_elements:
-        #print(de)
-        print(input_dicom.data_element(de))
-        #dicom.add(input_dicom.data_element(de))
+    for de in input_dicom:
+        if de.name in data_elements:
+            dicom.add(input_dicom.data_element(de.name))
+    return dicom
+
 
 
 def add_graphic_annotation(dicom, group_number, layer, type, origin, rows, columns, data):
@@ -72,7 +75,7 @@ def add_graphic_annotation(dicom, group_number, layer, type, origin, rows, colum
     dicom[group_number, 0x100] = DataElement(Tag(group_number, 0x100), "US", 1)  # OverlayBitsAllocated
     dicom[group_number, 0x102] = DataElement(Tag(group_number, 0x102), "US", 0)  # OverlayBitPosition
     dicom[group_number, 0x3000] = DataElement(Tag(group_number, 0x3000), "OW", data)
-
+    return dicom
 
 def add_graphic_layer(dicom, layer_name, layer_description, layer_order):
     ds_graphic_layer = Dataset()
@@ -84,6 +87,7 @@ def add_graphic_layer(dicom, layer_name, layer_description, layer_order):
         dicom.GraphicLayers.append(ds_graphic_layer)
     else:
         dicom.GraphicLayers = Sequence([ds_graphic_layer])
+    return dicom
 
 
 def add_displayed_area_selection(dicom, columns, rows):
@@ -93,6 +97,7 @@ def add_displayed_area_selection(dicom, columns, rows):
     ds_displayed_area_selection.PresentationSizeMode = "SCALE TO FIT"
     ds_displayed_area_selection.PresentationPixelAspectRatio = [1, 1]
     dicom.DisplayedAreaSelections = Sequence([ds_displayed_area_selection])
+    return dicom
 
 
 def add_presentation_lut(dicom):  # LUT - Look Up Table for colors
@@ -120,6 +125,7 @@ def add_presentation_lut(dicom):  # LUT - Look Up Table for colors
                                    4014, 4030, 4046, 4062, 4078, 4095]
     ds_presentation_lut.data_element("LUTData").VR = "US"
     dicom.PresentationLUTSequence = Sequence([ds_presentation_lut])
+    return dicom
 
 
 def get_text_annotation(text, bounding_box, anchor_point=None):
@@ -158,3 +164,4 @@ def add_graphic_annotations(dicom, layer_name, graphic_objects, text_objects):
     ds_graphic_annotation.GraphicObjects = Sequence(graphic_objects)
     ds_graphic_annotation.TextObjects = Sequence(text_objects)
     dicom.GraphicAnnotations = Sequence([ds_graphic_annotation])
+    return dicom
