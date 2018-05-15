@@ -7,6 +7,7 @@ import os
 from pydicom.dataset import Dataset, FileDataset
 from pydicom.sequence import Sequence
 from shutil import copyfile
+from datetime import datetime
 
 # load the input image
 
@@ -25,10 +26,58 @@ print("==============================================")
 
 file_meta = Dataset()
 ds = FileDataset("output_sample.dcm", {}, file_meta=file_meta, preamble=b"\0" * 128)
+ds.SOPClassUID = "Grayscale Softcopy Presentation State Storage"
+ds.SOPInstanceUID = dicom.uid.generate_uid()
+ds.Modality = "PR"
+ds.PatientID = input_dicom.PatientID
+ds.PatientName = input_dicom.PatientName
+ds.PatientSex = input_dicom.PatientSex
+rss = Dataset()
+rss.SeriesInstanceUID = input_dicom.SeriesInstanceUID
+img = Dataset()
+img.SOPClassUID = input_dicom.SOPClassUID
+img.SOPInstanceUID = input_dicom.SOPInstanceUID
+rss.ReferencedImageSequence = Sequence([img])
+ds.ReferencedSeriesSequence = Sequence([rss])
+
+an = Dataset()
+an.GraphicLayer = "Layer1"
+an.ReferencedImageSequence = Sequence([img])
+ds_cir_object = Dataset()
+cir_pos_x, cir_pos_y, cir_rad = 300, 300, 90
+ds_cir_object.GraphicAnnotationUnits = "PIXEL"
+ds_cir_object.GraphicDimensions = 2
+ds_cir_object.NumberOfGraphicPoints = 2
+ds_cir_object.GraphicData = [
+    cir_pos_x,  # x coordinate of middle of circle
+    cir_pos_y,  # y coordinate of middle of circle
+    cir_pos_x,  # x coordinate of point on circumference
+    cir_pos_y + cir_rad]  # y coordinate of point on circumference
+ds_cir_object.GraphicType = "CIRCLE"
+ds_cir_object.GraphicFilled = "N"
+an.GraphicObjectSequence = Sequence([ds_cir_object])
+ds.GraphicAnnotationSequence = Sequence([an])
+ds_displayed_area_selection = Dataset()
+ds_displayed_area_selection.DisplayedAreaTopLeftHandCorner = [1, 1]
+ds_displayed_area_selection.DisplayedAreaBottomRightHandCorner = [input_dicom.Columns, input_dicom.Rows]
+ds_displayed_area_selection.PresentationSizeMode = "SCALE TO FIT"
+ds_displayed_area_selection.PresentationPixelAspectRatio = [1, 1]
+ds.DisplayedAreaSelectionsSequence = Sequence([ds_displayed_area_selection])
+
+
+
+'''
 #ds.is_little_endian = True
 #ds.is_implicit_VR = True
-for ele in input_dicom:
-    ds.add(ele)
+#for ele in input_dicom:
+#    ds.add(ele)
+
+# content desc
+ds.ContentDescription = "GSPS"
+
+# gsps study info
+
+# reffer image
 
 # ADD GRAPHIC LAYER
 ds_graphic_layer = Dataset()
@@ -70,6 +119,7 @@ for ele in ds_displayed_area_selection:
     ds.add(ele)
 for ele in ds_graphic_annotation:
     ds.add(ele)
+'''
 
 #ds.is_little_endian = False
 #ds.is_implicit_VR = False
