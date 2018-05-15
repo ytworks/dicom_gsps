@@ -13,6 +13,7 @@ cir_rad, cir_pos_x, cir_pos_y = 10, 100, 100
 
 # load the input image
 input_dicom = dicom.read_file("./images/sample.dcm")
+print(input_dicom)
 print("OK: Read dicom file")
 
 # generate series uid
@@ -55,6 +56,7 @@ circle2 = gsps.get_circle(cir_rad + 20, cir_pos_x, cir_pos_y)
 circle3 = gsps.get_circle(cir_rad, cir_pos_x + 200, cir_pos_y + 100)
 ds_out = gsps.add_graphic_annotations(ds_out, "LAYER1", [circle, circle2, circle3], [text])
 print("OK: add annotation")
+print(ds_out)
 
 # write output
 ds_out.save_as("./images/sample.pre")
