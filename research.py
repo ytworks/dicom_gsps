@@ -32,6 +32,7 @@ ds.Modality = "PR"
 ds.PatientID = input_dicom.PatientID
 ds.PatientName = input_dicom.PatientName
 ds.PatientSex = input_dicom.PatientSex
+ds.PatientsBirthDate = input_dicom.PatientsBirthDate
 rss = Dataset()
 rss.SeriesInstanceUID = input_dicom.SeriesInstanceUID
 img = Dataset()
