@@ -15,6 +15,7 @@ def generate(input_file, json_file, output_file):
     dataset = __make_file(dataset, output_file)
     dataset = __basic_settings_for_gsps(dataset)
     dataset = __copy_from_original(dataset, input_dicom)
+    dataset = __add_annotation(dataset, json_file)
     dataset.save_as(output_file)
     return dataset
 
@@ -44,8 +45,13 @@ def __basic_settings_for_gsps(dataset):
     return dataset
 
 def __add_annotation(dataset, json_file):
-    annotation_data = json.load(json_file)
+    f = open(json_file, 'r')
+    print(f)
+    for r in f:
+        print(r)
+    annotation_data = json.load(f)
     print(annotation_data)
+    return dataset
 
 def __make_file(dataset, output_file):
     ds = FileDataset(os.path.basename(output_file), {},
