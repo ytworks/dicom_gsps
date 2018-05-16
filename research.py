@@ -32,7 +32,12 @@ ds.Modality = "PR"
 ds.PatientID = input_dicom.PatientID
 ds.PatientName = input_dicom.PatientName
 ds.PatientSex = input_dicom.PatientSex
-ds.PatientsBirthDate = input_dicom.PatientsBirthDate
+ds.PatientBirthDate = input_dicom.PatientBirthDate
+ds.StudyDate = input_dicom.StudyDate
+ds.Studyime = input_dicom.StudyTime
+#ds.StudyDescription = input_dicom.StudyDescription
+ds.ReferringPhysicianName = input_dicom.ReferringPhysicianName
+#ds.AccessionNumber = input_dicom.AccessionNumber
 rss = Dataset()
 rss.SeriesInstanceUID = input_dicom.SeriesInstanceUID
 img = Dataset()
@@ -65,13 +70,13 @@ ds_displayed_area_selection.PresentationSizeMode = "SCALE TO FIT"
 ds_displayed_area_selection.PresentationPixelAspectRatio = [1, 1]
 ds.DisplayedAreaSelectionsSequence = Sequence([ds_displayed_area_selection])
 
-
+#for ele in input_dicom:
+#    ds.add(ele)
 
 '''
 #ds.is_little_endian = True
 #ds.is_implicit_VR = True
-#for ele in input_dicom:
-#    ds.add(ele)
+
 
 # content desc
 ds.ContentDescription = "GSPS"
