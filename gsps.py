@@ -1,5 +1,5 @@
 from datetime import datetime
-import pydicom as dicom
+import pydicom
 from pydicom.dataset import Dataset, DataElement, Tag
 from pydicom.sequence import Sequence
 
@@ -7,7 +7,7 @@ from pydicom.sequence import Sequence
 def get_gsps_file_metadata():
     file_meta = Dataset()
     file_meta.MediaStorageSOPClassUID = "1.2.840.10008.5.1.4.1.1.11.1"  # Grayscale Softcopy Presentation State Storage SOP Class
-    file_meta.MediaStorageSOPInstanceUID = dicom.uid.generate_uid()
+    file_meta.MediaStorageSOPInstanceUID = pydicom.uid.generate_uid()
     file_meta.ImplementationClassUID = "1.2.276.0.7230010.3.0.3.4.1"
     file_meta.ImplementationVersionName = "GSPS_DEMO"
     return file_meta
